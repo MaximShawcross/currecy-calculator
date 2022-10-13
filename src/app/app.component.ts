@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { CurrencydataService } from './currencydata.service';
+import { AbstractControl, FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { CurrencydataService } from "@app/services";
+import { CurrencyResponceModel, CurrencyCodes } from './shared/models';
+
+type CurrencyOrder =  1 | 2;
 
 @Component({
   selector: 'app-root',
@@ -9,86 +12,85 @@ import { CurrencydataService } from './currencydata.service';
 })
 export class AppComponent {
   title = 'currecy-calculator';
+  currencyForm: FormGroup = this.formBuilder.group({
+    firstInput: [ 0 ],
+    secondInput: [ 0 ],
+    firstSelect: [CurrencyCodes.EUR],
+    secondSelect: [CurrencyCodes.EUR],
 
-  input = new FormControl(0);
-  input2 = new FormControl(0);
+  });
 
-  firstCurrJson: any;
-  secondCurrJson: any;
+  firstCurrJson!: CurrencyResponceModel;
+  secondCurrJson!: CurrencyResponceModel ;
 
-  firstCurrency = "EUR";
-  secondCurrency = "EUR";
-  result: string = "1";
+  firstCurrency = CurrencyCodes.EUR;
+  secondCurrency = CurrencyCodes.EUR;
+
+  CURRENCY_CODES = CurrencyCodes;
+
+  get firstInput(): AbstractControl {
+    return this.currencyForm.controls["firstInput"];
+  } 
+
+  get secondInput(): AbstractControl {
+    return this.currencyForm.controls["secondInput"];
+  }
+
+  constructor ( private currencyService: CurrencydataService, private formBuilder: FormBuilder ) { }
   
-
   ngOnInit() {
-    this.changeFirst("EUR");
-    this.changeSecond("EUR");
+    this.setCurrencyValue(CurrencyCodes.EUR, 1);
+    this.setCurrencyValue(CurrencyCodes.EUR, 2);
   }
 
-  changeFirst(first: string) {
-    this.firstCurrency = first;
-    this.convert(this.firstCurrency, 1);
+  setCurrencyValue(currencyCode: CurrencyCodes | string , order: CurrencyOrder): void {
+    order === 1 ? this.firstCurrency = currencyCode as CurrencyCodes : this.secondCurrency = currencyCode as CurrencyCodes;
+    order === 1 ? this.getCurrencyData(this.firstCurrency, 1) : this.getCurrencyData(this.secondCurrency, 2);
   }
 
-  changeSecond(second: string) {
-    this.secondCurrency = second;
-    this.convert(this.secondCurrency, 2);
-  }
+  onInput( formInputKey: string ) {
+    this.calcCurrency(formInputKey);
+  } 
 
-  constructor ( private currency: CurrencydataService ) { }
-
-  convert(str: string, curNum: 1 | 2) {
-
-    this.currency.getCurrencyData(str).subscribe( data => {
-      curNum === 1 ? this.firstCurrJson = JSON.stringify(data) : this.secondCurrJson = JSON.stringify(data);
-      curNum === 1 ? this.firstCurrJson = JSON.parse(this.firstCurrJson) : this.secondCurrJson = JSON.parse(this.secondCurrJson);       
+  private getCurrencyData (currencyCode: CurrencyCodes, order: CurrencyOrder): void {
+    this.currencyService.getCurrencyData(currencyCode).subscribe( (data :CurrencyResponceModel) => {
+      this.setCurrencyData(data, order);
     })
   }
 
-  onFirstInput() {
-    if (this.firstCurrency === this.secondCurrency) {
-      this.input2.setValue(this.input.value);
-      this.input.setValue(this.input2.value);
-    }       
-    
-    switch (this.secondCurrency.toLocaleLowerCase()) {
-      case "uah":
-        this.input2.setValue(this.input.value * this.firstCurrJson.rates["UAH"]);
-        console.log(this.secondCurrency);
-        break;
-      case "eur":
-        this.input2.setValue(this.input.value * this.firstCurrJson.rates["EUR"]); 
-        console.log(this.secondCurrency);
-        break;
-      case "usd":
-        this.input2.setValue(this.input.value * this.firstCurrJson.rates["USD"]); 
-        console.log(this.input.value);          
-        break;
-    }
-    
-  } 
-
-  onSecondInput() {
-    if (this.secondCurrency === this.firstCurrency) {
-      this.input.setValue(this.input2.value);
-      this.input2.setValue(this.input.value);
-    } 
-        
-    switch (this.firstCurrency.toLocaleLowerCase()) {
-      case "uah":
-        this.input.setValue(this.input2.value * this.secondCurrJson.rates["UAH"]);
-        break;
-      case "eur":
-        this.input.setValue(this.input2.value * this.secondCurrJson.rates["EUR"]); 
-        console.log(this.secondCurrency);
-        break;
-      case "usd": 
-        this.input.setValue(this.input2.value * this.secondCurrJson.rates["USD"]); 
-        console.log(this.secondCurrency);          
-        break;
-    }
-      
+  private setCurrencyData (currencyData: CurrencyResponceModel, order: CurrencyOrder): void {
+    order === 1 ? this.firstCurrJson = currencyData : this.secondCurrJson = currencyData;
   }
+
+  private calcCurrency(formInputKey: string): void {
+
+    let mainField!: AbstractControl;
+    let supportingField!: AbstractControl;
+    let currency!: string;
+
+    if ( formInputKey === "firstInput" ) {
+      mainField = this.firstInput; 
+      supportingField = this.secondInput;
+      currency = this.secondCurrency
+    } else if (formInputKey === "secondInput")  {
+      supportingField = this.firstInput; 
+      mainField = this.secondInput;
+      currency = this.firstCurrency
+    }
+
+    switch (currency) {
+      case CurrencyCodes.UAH:
+        supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency]);
+        break;
+      case CurrencyCodes.USD:
+        supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency]); 
+        break;
+      case CurrencyCodes.EUR:
+        supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency]); 
+      break;
+      default: { return }
+    }
+  }
+
 }
 
