@@ -1,31 +1,33 @@
-<div class="container">
-  <app-header></app-header>
-  <form novalidate class="form">
-    <div class="form__item">
-      <select class = "form__item__select" #c1 type="text" (change)="changeFirst(c1.value)">
-        <option value="EURO">EUR</option>
-        <option value="USD">USD</option>
-        <option value="UAH">UAH</option>
-     </select>    
-     <input [formControl] = "input" type="number" (change)="onFirstInput()">
-    </div>
+<div class="background">
+  <div class="container">
+    <app-header></app-header>
+    <h1 class ="title">Converter</h1>
 
-    <div class="form__divider">
-      to
-    </div>
-    
-    <div class="form__item">
-      <select class = "form__item__select" #c2 type="text" id = "country2" (change)="changeSecond(c2.value)">
-        <option value="EURO">EUR</option>
-        <option value="USD">USD</option>
-         <option value="UAH">UAH</option>
-      </select>
-      <input  [formControl] = "input2" type="number" (change)="onSecondInput()">
-
-    </div>
-  </form>
-  <div class="result">
-    <p>Result: </p>
+    <form novalidate class="form">
+      <div class="form__item">
+        <select class = "form__item__select" #c1 type="text" (change)="changeFirst(c1.value)">
+          <option value="EURO">EUR</option>
+          <option value="USD">USD</option>
+          <option value="UAH">UAH</option>
+       </select>    
+       <input class ="form__item__input" [formControl] = "input" type="number" (change)="onFirstInput()">
+      </div>
+  
+      <div class="form__divider">
+        to
+      </div>
+      
+      <div class="form__item">
+          <select class = "form__item__select" #c2 type="text" id = "country2" (change)="changeSecond(c2.value)">
+            <option value="EURO">EUR</option>
+            <option value="USD">USD</option>
+             <option value="UAH">UAH</option>
+          </select>
+        <input class = "form__item__input" [formControl] = "input2" type="number" (change)="onSecondInput()">
+  
+      </div>
+    </form>
   </div>
+  
 </div>
 
