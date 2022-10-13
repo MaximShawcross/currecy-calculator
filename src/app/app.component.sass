@@ -1,0 +1,80 @@
+*
+    margin: 0
+    padding: 0
+
+
+    
+.container
+    width: 540px
+    margin: 0 auto
+    
+.title
+    margin-top: 25px
+    font-size: 22px
+    text-align: center  
+
+.form 
+    border: 1px solid black
+    height: 200px
+    margin-top: 10px
+    display: flex
+    align-items: center
+    justify-content: center
+   
+    &__item 
+        
+        &__select 
+            display: grid
+            grid-template-areas: "select"
+            align-items: center
+            position: relative
+            width: 100%
+            select,
+            &::after 
+                grid-area: select
+                min-width: 15ch
+                max-width: 30ch
+
+            border: 1px solid var(--select-border)
+            border-radius: 0.25em
+            padding: 0.25em 0.5em
+
+            font-size: 1.25rem
+            cursor: pointer
+            line-height: 1.1
+
+            // Optional styles
+            // remove for transparency
+            background-color: #fff
+            background-image: linear-gradient(to top, #f9f9f9, #fff 33%)
+
+            // Custom arrow
+            &:not(.select--multiple)::after 
+                content: ""
+                justify-self: end
+                width: 0.8em
+                height: 0.5em
+                background-color: var(--select-arrow)
+                clip-path: polygon(100% 0%, 0 0%, 50% 100%)
+        &__input
+            box-sizing: border-box
+            margin-top: 15px
+            display: block
+            width: 100%
+            border: 1px solid black
+            padding: 5px
+            color: currentColor
+            background: transparent
+            border-radius: var(--size-radius)
+            color: black
+            
+    &__divider 
+        margin: 0 25px
+        font-size: 25px
+
+.result 
+    text-align: center
+    margin-top: 25px
+
+
+  
