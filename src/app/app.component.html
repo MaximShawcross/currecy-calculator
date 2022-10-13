@@ -3,14 +3,14 @@
     <app-header></app-header>
     <h1 class ="title">Converter</h1>
 
-    <form novalidate class="form">
+    <form novalidate [formGroup]="currencyForm" class="form">
       <div class="form__item">
-        <select class = "form__item__select" #c1 type="text" (change)="changeFirst(c1.value)">
-          <option value="EURO">EUR</option>
+        <select formControlName = "firstSelect" class = "form__item__select" type="text" (change)="setCurrencyValue( $any ($event.target).value, 1 )">
+          <option value="EUR">EUR</option>
           <option value="USD">USD</option>
           <option value="UAH">UAH</option>
        </select>    
-       <input class ="form__item__input" [formControl] = "input" type="number" (change)="onFirstInput()">
+       <input class ="form__item__input" formControlName = "firstInput" type="number" (change)="onInput('firstInput')">
       </div>
   
       <div class="form__divider">
@@ -18,12 +18,12 @@
       </div>
       
       <div class="form__item">
-          <select class = "form__item__select" #c2 type="text" id = "country2" (change)="changeSecond(c2.value)">
-            <option value="EURO">EUR</option>
+          <select formControlName = "secondSelect" class = "form__item__select" type="text" (change)="setCurrencyValue( $any ($event.target).value, 1 )">
+            <option value="EUR">EUR</option>
             <option value="USD">USD</option>
-             <option value="UAH">UAH</option>
+            <option value="UAH">UAH</option>
           </select>
-        <input class = "form__item__input" [formControl] = "input2" type="number" (change)="onSecondInput()">
+        <input class = "form__item__input" formControlName = "secondInput" type="number" (change)="onInput('secondInput')">
   
       </div>
     </form>
