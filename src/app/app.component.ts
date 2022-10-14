@@ -72,23 +72,14 @@ export class AppComponent {
       mainField = this.firstInput; 
       supportingField = this.secondInput;
       currency = this.secondCurrency
-    } else if (formInputKey === "secondInput")  {
-      supportingField = this.firstInput; 
-      mainField = this.secondInput;
-      currency = this.firstCurrency
-    }
 
-    switch (currency) {
-      case CurrencyCodes.UAH:
-        supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency]);
-        break;
-      case CurrencyCodes.USD:
-        supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency]); 
-        break;
-      case CurrencyCodes.EUR:
-        supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency]); 
-      break;
-      default: { return }
+      supportingField.setValue(mainField.value * this.firstCurrJson.rates[currency])
+    } else if (formInputKey === "secondInput")  {
+      mainField = this.firstInput; 
+      supportingField = this.secondInput;
+      currency = this.firstCurrency
+
+      mainField.setValue(supportingField.value * this.secondCurrJson.rates[currency])
     }
   }
 
